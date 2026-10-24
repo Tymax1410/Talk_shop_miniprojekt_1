@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 authors = [
     { name = "Piotr Gnyś", email = "pgnys@swps.edu.pl" }
-    { name = "Tymon Miśkiewicz, email = "tmiskiewicz@st.swps.edu.pl" }
+    { name = "Tymon Miśkiewicz", email = "tmiskiewicz@st.swps.edu.pl" }
 ]
 requires-python = ">=3.13"
 dependencies = []
@@ -18,6 +18,7 @@ requires = ["uv_build>=0.13.1,<0.14.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
+
 dev = [
   "ruff",
   "mypy",
@@ -25,7 +26,9 @@ dev = [
   "pytest-cov",
   "coverage",
   "pre-commit",
-  "ipython"
+  "ipython",
+  "mypy",
+  “pylint”
 ]
 
 nlp = [

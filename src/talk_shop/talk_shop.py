@@ -5,6 +5,7 @@ from lark import Lark, Token, Tree
 from lark.exceptions import LarkError
 from dataclasses import dataclass
 import argparse
+import logging
 
 # ======================================================================================
 #                                     DATA MODEL
@@ -53,10 +54,22 @@ def process_query(query: str, parser: Lark)-> str:
             return f"The  quantity of {item} is {products[str(item)].stock}"
         return "Unable to process query."
     except KeyError:
-        return "This product is currently unavailable"
+        logging.error(f"I couldn't find this product in this query:{query}")
+        return "This product is currently unavailable."
     except LarkError:
-        return"I don't understand your question"
+        logging.error(f"Check if we can expand this LLM for this question/option:{query}")
+        return"I don't understand your question."
 
+# =====================================================================================
+#                                       LOGGING
+# =====================================================================================
+
+def setup_logging(log_file: str, log_level: str):
+    logging.basicConfig(
+        filename = log_file,
+        level = log_level.upper(),
+        format = "%(asctime)s - %(levelname)s - %(message)s"
+        )
 
 # =====================================================================================
 #                           OBSŁUGA ARGUMENTÓW COMMAND LINE'A
@@ -67,20 +80,33 @@ def parse_args():
         "-g","--grammar",
         type=str,
         required=True,
-        help="Ścieżka do pliku z gramatyką"
+        help="Path to the file with grammar"
+    )
+    parser.add_argument(
+        "-lf","--log-file",
+        default="app.log",
+        type=str,
+        help="Path to the file with logs"
+    )
+    parser.add_argument(
+        "-ll","--log-level",
+        default="INFO",
+        type=str,
+        help="Log level info"
     )
     return parser.parse_args()
 
-def load_grammar():
-    args = parse_args()
-    with open(args.grammar, "r", encoding="utf-8") as file:
+def load_grammar(grammar_path: str):
+    with open(grammar_path,"r", encoding="utf-8") as file:
         grammar_text = file.read()
     return grammar_text
 # =====================================================================================
 #                                        MAIN
 # =====================================================================================
 def main()->None:
-    grammar_text = load_grammar()
+    args = parse_args()
+    setup_logging(args.log_file, args.log_level)
+    grammar_text = load_grammar(args.grammar)
     parser = Lark(grammar_text, parser="earley")
     while True:
         query = input("Query > ")
