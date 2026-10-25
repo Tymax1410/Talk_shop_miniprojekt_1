@@ -71,6 +71,32 @@ def retrieve_product_by_name(name: str, eng: Engine)-> list[Product]:
             products.append(product_model.from_model())
     return products
 
+def retrieve_all_products(eng: Engine)-> list[Product]:
+    products: list[Product] = []
+    with Session(eng) as session:
+        query: Select[ProductModel] = select(ProductModel)
+        product_models: Sequence[ProductModel] = session.scalars(query).all()
+        for product_model in product_models:
+            products.append(product_model.from_model())
+    return products
+
+def delete_product_by_name(name: str, eng: Engine) -> None:
+    with Session(eng) as session:
+        query: Select[ProductModel] = select(ProductModel).where(ProductModel.name == name)
+        product_to_delete = session.scalars(query).first()
+        if product_to_delete is not None:
+            session.delete(product_to_delete)
+        session.commit()
+
+def update_product_by_name(name: str, new_price: float, new_stock: int, eng: Engine) -> None:
+    with Session(eng) as session:
+        query: Select[ProductModel] = select(ProductModel).where(ProductModel.name == name)
+        product_to_update = session.scalars(query).first()
+        if product_to_update is not None:
+            product_to_update.price = new_price
+            product_to_update.stock = new_stock
+        session.commit()
+
 def clear_db(eng: Engine)-> None:
     with Session(eng) as session:
         session.query(ProductModel).delete(synchronize_session="fetch")

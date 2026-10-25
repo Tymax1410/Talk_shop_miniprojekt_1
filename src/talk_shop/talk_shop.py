@@ -94,6 +94,12 @@ def parse_args():
         type=str,
         help="Log level info"
     )
+    parser.add_argument(
+        "-a","--admin",
+        action="store_true",
+        help="Admin panel"
+    )
+
     return parser.parse_args()
 
 def load_grammar(grammar_path: str):
