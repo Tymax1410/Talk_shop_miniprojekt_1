@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [
-    { name = "Piotr Gnyś", email = "pgnys@swps.edu.pl" }
+    { name = "Piotr Gnyś", email = "pgnys@swps.edu.pl" },
     { name = "Tymon Miśkiewicz", email = "tmiskiewicz@st.swps.edu.pl" }
 ]
 requires-python = ">=3.13"
@@ -28,7 +28,7 @@ dev = [
   "pre-commit",
   "ipython",
   "mypy",
-  “pylint”
+  "pylint"
 ]
 
 nlp = [
