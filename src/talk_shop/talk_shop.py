@@ -54,10 +54,10 @@ def process_query(query: str, parser: Lark)-> str:
             return f"The  quantity of {item} is {products[str(item)].stock}"
         return "Unable to process query."
     except KeyError:
-        logging.error(f"I couldn't find this product in this query:{query}")
+        logging.error(f"I couldn't find this product in this query: {query}")
         return "This product is currently unavailable."
     except LarkError:
-        logging.error(f"Check if we can expand this LLM for this question/option:{query}")
+        logging.error(f"Check if we can expand this LLM for this question/option: {query}")
         return"I don't understand your question."
 
 # =====================================================================================
