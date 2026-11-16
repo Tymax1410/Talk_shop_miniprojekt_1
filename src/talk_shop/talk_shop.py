@@ -4,9 +4,9 @@
 from lark import Lark, Token, Tree
 from lark.exceptions import LarkError
 from dataclasses import dataclass
+from .data_shop import admin_menu, prepare_db
 import argparse
 import logging
-
 # ======================================================================================
 #                                     DATA MODEL
 # ======================================================================================
@@ -79,7 +79,7 @@ def parse_args():
     parser.add_argument(
         "-g","--grammar",
         type=str,
-        required=True,
+        required=False,
         help="Path to the file with grammar"
     )
     parser.add_argument(
@@ -111,15 +111,19 @@ def load_grammar(grammar_path: str):
 # =====================================================================================
 def main()->None:
     args = parse_args()
-    setup_logging(args.log_file, args.log_level)
-    grammar_text = load_grammar(args.grammar)
-    parser = Lark(grammar_text, parser="earley")
-    while True:
-        query = input("Query > ")
-        if query == "END":
-            break
-        response = process_query(query, parser)
-        print(response)
+    eng = prepare_db()
+    if args.admin:
+        admin_menu(eng)
+    else:
+        setup_logging(args.log_file, args.log_level)
+        grammar_text = load_grammar(args.grammar)
+        parser = Lark(grammar_text, parser="earley")
+        while True:
+            query = input("Query > ")
+            if query == "END":
+                break
+            response = process_query(query, parser)
+            print(response)
 
 
 if __name__ == "__main__":
