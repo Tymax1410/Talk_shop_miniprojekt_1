@@ -126,9 +126,9 @@ def add_product(eng:Engine):
 
 def search_product(eng: Engine):
     while True:
-        name_of_product = input("Input name of the product")
+        name_of_product = input("Input name of the product > ")
         product = retrieve_product_by_name(name_of_product, eng)
-        if product is None:
+        if not product:
             print("This product is not in this database")
         else:
             print(product)
@@ -147,16 +147,16 @@ def show_all_products(eng: Engine):
 
 def delete_product(eng: Engine):
     while True:
-        name_of_product = input("Input name of the product")
+        name_of_product = input("Input name of the product > ")
         product = retrieve_product_by_name(name_of_product, eng)
-        if product is None:
+        if not product:
             print("This product is not in this database")
         else:
             question = input(f"If you sure you want delete {name_of_product}, type Y . > ").upper()
             if question == "Y":
                 delete_product_by_name(name_of_product,eng)
                 print("Success")
-        question = input("If you want to delete another product, type Y . > ")
+        question = input("If you want to delete another product, type Y . > ").upper()
         if question == "Y":
             continue
         else:
@@ -164,9 +164,9 @@ def delete_product(eng: Engine):
 
 def edit_product(eng: Engine):
     while True:
-        name_of_product = input("Input name of the product")
+        name_of_product = input("Input name of the product > ")
         product = retrieve_product_by_name(name_of_product, eng)
-        if product is None:
+        if not product:
             print("This product is not in this database")
         else:
             try:

@@ -1,12 +1,14 @@
 # =====================================================================================
 #                                     IMPORTS
 # =====================================================================================
-from lark import Lark, Token, Tree
-from lark.exceptions import LarkError
 from dataclasses import dataclass
-from .data_shop import admin_menu, prepare_db
 import argparse
 import logging
+
+from lark import Lark, Token, Tree
+from lark.exceptions import LarkError
+
+from .data_shop import admin_menu, prepare_db
 # ======================================================================================
 #                                     DATA MODEL
 # ======================================================================================
@@ -34,30 +36,25 @@ def pretty_print(node: Tree|Token, depth: int=0)->None:
     print("  "*depth + node.data)
     for subtree in node.children:
         pretty_print(subtree, depth+1)
-    
 
 def process_query(query: str, parser: Lark)-> str:
     try:
+        response = "Unable to process query."
         tree = parser.parse(query)
         query_node: Tree | Token = tree.children[0]
         if isinstance(query_node, Token):
-            return "Unable to process query."
-        if query_node.data == "price_question":
             item = list(query_node.find_token("ITEM"))[0]
-            if not isinstance(item, Token):
-                return "Unable to process query."
-            return f"The {item} costs {products[str(item)].price}$"
-        if query_node.data == "stock_question":
-            item = list(query_node.find_token("ITEM"))[0]
-            if not isinstance(item, Token):
-                return "Unable to process query."
-            return f"The  quantity of {item} is {products[str(item)].stock}"
-        return "Unable to process query."
+            if isinstance(item, Token):
+                if query_node.data == "price_question":
+                    response = f"The {item} costs {products[str(item)].price}$"
+                elif query_node.data == "stock_question":
+                    response = f"The  quantity of {item} is {products[str(item)].stock}"
+        return response
     except KeyError:
-        logging.error(f"I couldn't find this product in this query: {query}")
+        logging.error("I couldn't find this product in this query: %s", query)
         return "This product is currently unavailable."
     except LarkError:
-        logging.error(f"Check if we can expand this LLM for this question/option: {query}")
+        logging.error("Check if we can expand this LLM for this question/option: %s",query)
         return"I don't understand your question."
 
 # =====================================================================================
@@ -119,8 +116,8 @@ def main()->None:
         grammar_text = load_grammar(args.grammar)
         parser = Lark(grammar_text, parser="earley")
         while True:
-            query = input("Query > ")
-            if query == "END":
+            query = input("Query > ").lower()
+            if query == "end":
                 break
             response = process_query(query, parser)
             print(response)
